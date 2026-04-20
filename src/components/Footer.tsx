@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom'
+
 const footerLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'About Us', href: '#about' },
-  { label: 'Services', href: '#services' },
-  { label: 'Contact Us', href: '#contact' },
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Services', href: '/services' },
+  { label: 'Contact Us', href: '/contact' },
 ]
 
 function Footer() {
@@ -26,13 +28,13 @@ function Footer() {
         </p>
         <nav className="mt-6 flex flex-wrap items-center justify-center gap-5">
           {footerLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              to={link.href}
               className="text-sm text-slate-400 transition duration-300 hover:text-white"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <p className="mt-8 text-sm text-slate-500">

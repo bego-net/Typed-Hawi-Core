@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import api from '../api/axios'
+import { isAdminLoggedIn } from '../auth/token'
 import ServiceForm from './ServiceForm'
 import type { Service } from '../types/service'
 
 type ServiceResponse = Service[] | { data: Service[] }
 
-const isImageIcon = (icon: string) => {
+const isImageIcon = (icon: string | null) => {
+  if (!icon) return false
   return (
     icon.startsWith('http://') ||
     icon.startsWith('https://') ||
@@ -15,6 +17,7 @@ const isImageIcon = (icon: string) => {
 }
 
 function ServiceList() {
+  const canEdit = isAdminLoggedIn()
   const [services, setServices] = useState<Service[]>([])
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
@@ -77,11 +80,13 @@ function ServiceList() {
 
   return (
     <section className="space-y-6">
-      <ServiceForm
-        selectedService={selectedService}
-        onSuccess={fetchServices}
-        onCancelEdit={() => setSelectedService(null)}
-      />
+      {canEdit ? (
+        <ServiceForm
+          selectedService={selectedService}
+          onSuccess={fetchServices}
+          onCancelEdit={() => setSelectedService(null)}
+        />
+      ) : null}
 
       {error ? (
         <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -126,33 +131,35 @@ function ServiceList() {
                 <div className="mb-4 flex items-start justify-between gap-4">
                   {isImageIcon(service.icon) ? (
                     <img
-                      src={service.icon}
+                      src={service.icon ?? ''}
                       alt={service.title}
                       className="h-14 w-14 rounded-2xl border border-slate-200 bg-white object-cover"
                     />
                   ) : (
                     <div className="inline-flex min-h-14 min-w-14 items-center justify-center rounded-2xl border border-cyan-200 bg-cyan-50 px-4 text-sm font-semibold text-cyan-700">
-                      {service.icon}
+                      {service.icon ?? ''}
                     </div>
                   )}
 
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(service)}
-                      className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void handleDelete(service.id)}
-                      disabled={deletingId === service.id}
-                      className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
-                    >
-                      {deletingId === service.id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
+                  {canEdit ? (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(service)}
+                        className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(service.id)}
+                        disabled={deletingId === service.id}
+                        className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+                      >
+                        {deletingId === service.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
 
                 <h3 className="text-xl font-semibold text-slate-900">

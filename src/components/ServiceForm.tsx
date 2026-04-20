@@ -28,7 +28,7 @@ function ServiceForm({
     if (selectedService) {
       setTitle(selectedService.title)
       setDescription(selectedService.description)
-      setIcon(selectedService.icon)
+      setIcon(selectedService.icon ?? '')
       return
     }
 

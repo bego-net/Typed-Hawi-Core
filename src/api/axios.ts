@@ -1,10 +1,22 @@
 import axios from 'axios'
+import { getToken } from '../auth/token'
 
 const api = axios.create({
-  baseURL: 'https://hawi-backend.test/api',
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://hawi-backend.test/api',
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
+})
+
+api.interceptors.request.use((config) => {
+  const token = getToken()
+
+  if (token && config.headers) {
+    config.headers.set('Authorization', `Bearer ${token}`) // ✅ FIX
+  }
+
+  return config
 })
 
 export default api

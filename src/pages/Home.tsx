@@ -1,6 +1,4 @@
-import Footer from '../components/Footer'
 import Hero from '../components/Hero'
-import Navbar from '../components/Navbar'
 import ProductCard from '../components/ProductCard'
 import ServiceCard from '../components/ServiceCard'
 
@@ -134,8 +132,6 @@ const partners = [
 
 function Home() {
   return (
-    <div className="min-h-screen bg-white text-slate-950">
-      <Navbar />
       <main>
         <Hero />
 
@@ -358,8 +354,6 @@ function Home() {
           </div>
         </section>
       </main>
-      <Footer />
-    </div>
   )
 }
 

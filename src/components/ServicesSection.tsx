@@ -4,14 +4,18 @@ import type { Service } from '../types/service'
 
 type ServiceResponse = Service[] | { data: Service[] }
 
-const isImageIcon = (icon: string) =>
+const isImageIcon = (icon: string | null) => {
+  if (!icon) return false
+  return (
   icon.startsWith('http://') ||
   icon.startsWith('https://') ||
   icon.startsWith('/') ||
   icon.startsWith('data:image')
+  )
+}
 
 const getIconLabel = (service: Service) => {
-  if (service.icon.trim()) {
+  if (service.icon?.trim()) {
     return service.icon.trim().slice(0, 2).toUpperCase()
   }
 
@@ -95,7 +99,7 @@ function ServicesSection() {
                 <div className="flex items-center gap-4">
                   {isImageIcon(service.icon) ? (
                     <img
-                      src={service.icon}
+                      src={service.icon ?? ''}
                       alt={service.title}
                       className="h-14 w-14 rounded-2xl border border-white/10 bg-white object-cover shadow-sm"
                     />
