@@ -37,14 +37,23 @@ export default function ServicesDashboard() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => void logout()}
-            disabled={loggingOut}
-            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {loggingOut ? 'Signing out...' : 'Sign out'}
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/admin/contacts')}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950"
+            >
+              Contacts
+            </button>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              disabled={loggingOut}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {loggingOut ? 'Signing out...' : 'Sign out'}
+            </button>
+          </div>
         </div>
 
         <ServiceList />
