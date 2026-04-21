@@ -15,6 +15,7 @@ import QATesting from './pages/services/QATesting'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLogin from './pages/admin/AdminLogin'
 import ServicesDashboard from './pages/admin/ServicesDashboard'
+import ContactsDashboard from './pages/admin/ContactsDashboard'
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/admin/dashboard" element={<ServicesDashboard />} />
               <Route path="/admin/services" element={<ServicesDashboard />} />
+              <Route path="/admin/contacts" element={<ContactsDashboard />} />
             </Route>
           </Routes>
         </main>

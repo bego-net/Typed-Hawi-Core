@@ -1,13 +1,67 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import api from '../api/axios'
+
+const SUBJECT_OPTIONS = [
+  'General Inquiry',
+  'Custom Software Development',
+  'Web Development',
+  'Mobile App Development',
+  'IT Consultancy',
+  'E-Commerce Solutions',
+  'UI/UX Design',
+  'QA & Testing',
+  'Partnership',
+  'Other',
+]
 
 function ContactSection() {
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setIsSubmitted(true)
-    event.currentTarget.reset()
+    setSubmitting(true)
+    setSuccess(null)
+    setError(null)
+
+    try {
+      const res = await api.post<{ success: boolean; message: string }>('/contact', {
+        name,
+        email,
+        subject,
+        message,
+      })
+
+      setSuccess(res.data.message || 'Your message has been sent successfully!')
+      setName('')
+      setEmail('')
+      setSubject('')
+      setMessage('')
+    } catch (err: unknown) {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err
+      ) {
+        const errorResponse = err as {
+          response?: { data?: { message?: string } }
+        }
+        setError(
+          errorResponse.response?.data?.message ||
+          'Something went wrong. Please try again.'
+        )
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -32,20 +86,21 @@ function ContactSection() {
           </div>
 
           <div className="mx-auto w-full max-w-2xl rounded-[2rem] border border-white/70 bg-white/85 p-6 shadow-xl shadow-sky-200/70 backdrop-blur sm:p-8">
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={(e) => void handleSubmit(e)}>
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label
-                    htmlFor="name"
+                    htmlFor="contact-name"
                     className="mb-2 block text-sm font-medium text-slate-700"
                   >
                     Name
                   </label>
                   <input
-                    id="name"
-                    name="name"
+                    id="contact-name"
                     type="text"
                     required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
                     placeholder="Your name"
                   />
@@ -53,16 +108,17 @@ function ContactSection() {
 
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="contact-email"
                     className="mb-2 block text-sm font-medium text-slate-700"
                   >
                     Email
                   </label>
                   <input
-                    id="email"
-                    name="email"
+                    id="contact-email"
                     type="email"
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
                     placeholder="you@example.com"
                   />
@@ -71,38 +127,66 @@ function ContactSection() {
 
               <div>
                 <label
-                  htmlFor="message"
+                  htmlFor="contact-subject"
+                  className="mb-2 block text-sm font-medium text-slate-700"
+                >
+                  Subject
+                </label>
+                <select
+                  id="contact-subject"
+                  required
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+                >
+                  <option value="" disabled>
+                    Select a subject
+                  </option>
+                  {SUBJECT_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="contact-message"
                   className="mb-2 block text-sm font-medium text-slate-700"
                 >
                   Message
                 </label>
                 <textarea
-                  id="message"
-                  name="message"
+                  id="contact-message"
                   rows={6}
                   required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
                   placeholder="Tell us about your project or business needs"
                 />
               </div>
 
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm leading-6 text-slate-500">
-                  No backend submission yet. This form is ready for your next
-                  integration step.
-                </p>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-full bg-slate-950 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition duration-300 hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl"
+                  disabled={submitting}
+                  className="inline-flex items-center justify-center rounded-full bg-slate-950 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition duration-300 hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl disabled:opacity-70"
                 >
-                  Submit Message
+                  {submitting ? 'Sending...' : 'Submit Message'}
                 </button>
               </div>
 
-              {isSubmitted ? (
+              {success ? (
                 <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                  Thanks for reaching out. Your message has been captured
-                  locally.
+                  {success}
+                </div>
+              ) : null}
+
+              {error ? (
+                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
                 </div>
               ) : null}
             </form>
