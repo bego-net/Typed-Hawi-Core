@@ -3,13 +3,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
 import { setToken } from '../../auth/token'
 
-// ✅ Response type
+// Response type — matches the backend AdminAuthController response
 type LoginResponse = {
   success: boolean
   message: string
-  data?: {
-    token: string
-    token_type: 'Bearer'
+  token?: string
+  token_type?: 'Bearer'
+  user?: {
+    id: number
+    name: string
+    email: string
+    role: string | null
+    is_admin: boolean
   }
 }
 
@@ -44,7 +49,7 @@ export default function AdminLogin() {
         password,
       })
 
-      const token = res.data?.data?.token
+      const token = res.data?.token
 
       if (!token) {
         setError(res.data?.message || 'Login failed')
