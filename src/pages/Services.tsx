@@ -55,6 +55,7 @@ function Services() {
               <ServiceCard
                 key={service.id}
                 title={service.title}
+                slug={service.slug}
                 description={service.description}
                 icon={service.icon ?? ''}
               />
