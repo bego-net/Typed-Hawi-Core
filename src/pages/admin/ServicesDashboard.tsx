@@ -37,20 +37,12 @@ export default function ServicesDashboard() {
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/admin/contacts')}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950"
-            >
-              Contacts
-            </button>
-            <button
-              type="button"
-              onClick={() => void logout()}
-              disabled={loggingOut}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
-            >
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => navigate('/admin/products')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Products</button>
+            <button type="button" onClick={() => navigate('/admin/testimonials')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Testimonials</button>
+            <button type="button" onClick={() => navigate('/admin/partners')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Partners</button>
+            <button type="button" onClick={() => navigate('/admin/contacts')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Contacts</button>
+            <button type="button" onClick={() => void logout()} disabled={loggingOut} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">
               {loggingOut ? 'Signing out...' : 'Sign out'}
             </button>
           </div>
