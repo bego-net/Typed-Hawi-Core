@@ -17,7 +17,7 @@ import PartnersDashboard from './pages/admin/PartnersDashboard'
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-white text-slate-950">
+      <div className="min-h-screen bg-white dark:bg-[#050505] text-slate-950 dark:text-white transition-colors duration-500">
         <Navbar />
 
         <main>
