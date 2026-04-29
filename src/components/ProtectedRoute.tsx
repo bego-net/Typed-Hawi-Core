@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { isAdminLoggedIn } from '../auth/token'
+import AdminLayout from './admin/AdminLayout'
 
 export default function ProtectedRoute() {
   const location = useLocation()
@@ -8,6 +9,6 @@ export default function ProtectedRoute() {
     return <Navigate to="/admin/login" replace state={{ from: location }} />
   }
 
-  return <Outlet />
+  return <AdminLayout />
 }
 

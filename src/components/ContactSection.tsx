@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { motion } from 'framer-motion'
 import api from '../api/axios'
 import SocialLinks from './SocialLinks'
+import { 
+  HiOutlineEnvelope, HiOutlinePhone, HiOutlineMapPin, 
+  HiOutlineUser, HiOutlineTag, HiOutlineChatBubbleBottomCenterText 
+} from 'react-icons/hi2'
 
 const SUBJECT_OPTIONS = [
   'General Inquiry',
@@ -15,6 +20,16 @@ const SUBJECT_OPTIONS = [
   'Partnership',
   'Other',
 ]
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+}
+
+const slideUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+}
 
 function ContactSection() {
   const [name, setName] = useState('')
@@ -66,140 +81,169 @@ function ContactSection() {
   }
 
   return (
-    <section
-      id="contact"
-      className="bg-[linear-gradient(180deg,_#f8fafc_0%,_#dbeafe_100%)] py-20 sm:py-24"
-    >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="max-w-xl">
-            <span className="inline-flex rounded-full border border-sky-200 bg-white/70 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-              Contact
-            </span>
-            <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-              Ready to create a more professional digital presence?
-            </h2>
-            <p className="mt-6 text-base leading-8 text-slate-600">
-              Tell us what you are building, what needs improvement, or where
-              your team needs support. We will turn your ideas into a clear next
-              step.
-            </p>
-
-            {/* Social media links */}
-            <div className="mt-8">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Follow us
+    <section id="contact" className="relative py-24 sm:py-32 bg-slate-50 dark:bg-[#050505] transition-colors duration-300 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-100/40 via-transparent to-transparent dark:from-cyan-900/20" />
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 gap-x-16 gap-y-16 lg:grid-cols-2">
+          
+          {/* Left Column: Contact Info Cards */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="flex flex-col justify-center"
+          >
+            <motion.div variants={slideUp} className="max-w-xl mb-12">
+              <span className="inline-flex rounded-full bg-cyan-100 dark:bg-cyan-500/10 px-4 py-1.5 text-sm font-semibold leading-6 text-cyan-700 dark:text-cyan-400 ring-1 ring-inset ring-cyan-700/20 dark:ring-cyan-500/20 mb-6">
+                Let's Talk
+              </span>
+              <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+                Ready to elevate your digital presence?
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                We're here to help you transform your vision into reality. Reach out to us through any of these channels.
               </p>
-              <SocialLinks iconSize={22} />
-            </div>
-          </div>
+            </motion.div>
 
-          <div className="mx-auto w-full max-w-2xl rounded-[2rem] border border-white/70 bg-white/85 p-6 shadow-xl shadow-sky-200/70 backdrop-blur sm:p-8">
-            <form className="space-y-5" onSubmit={(e) => void handleSubmit(e)}>
-              <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-4">
+              <motion.div variants={slideUp} className="flex items-center gap-x-6 bg-white dark:bg-[#0f0f0f] p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 dark:bg-cyan-900/30">
+                  <HiOutlineEnvelope className="h-7 w-7 text-cyan-600 dark:text-cyan-400" />
+                </div>
                 <div>
-                  <label
-                    htmlFor="contact-name"
-                    className="mb-2 block text-sm font-medium text-slate-700"
-                  >
-                    Name
-                  </label>
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-white">Email Us</h3>
+                  <p className="mt-1 text-base text-slate-600 dark:text-slate-400">info@hawisoftware.com</p>
+                </div>
+              </motion.div>
+
+              <motion.div variants={slideUp} className="flex items-center gap-x-6 bg-white dark:bg-[#0f0f0f] p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 dark:bg-cyan-900/30">
+                  <HiOutlinePhone className="h-7 w-7 text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-white">Call Us</h3>
+                  <p className="mt-1 text-base text-slate-600 dark:text-slate-400">+251 927 684 988</p>
+                </div>
+              </motion.div>
+
+              <motion.div variants={slideUp} className="flex items-center gap-x-6 bg-white dark:bg-[#0f0f0f] p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 dark:bg-cyan-900/30">
+                  <HiOutlineMapPin className="h-7 w-7 text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-white">Visit Us</h3>
+                  <p className="mt-1 text-base text-slate-600 dark:text-slate-400">Adama, Ethiopia (G7XG+FQH)</p>
+                </div>
+              </motion.div>
+            </div>
+
+            <motion.div variants={slideUp} className="mt-12">
+              <p className="mb-4 text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Connect With Us</p>
+              <SocialLinks iconSize={26} />
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column: Contact Form */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative rounded-[2.5rem] bg-white dark:bg-[#111] p-8 lg:p-12 border border-slate-200 dark:border-white/10 shadow-2xl"
+          >
+            <form onSubmit={(e) => void handleSubmit(e)} className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="relative">
+                  <label htmlFor="name" className="sr-only">Name</label>
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <HiOutlineUser className="h-5 w-5 text-slate-400" />
+                  </div>
                   <input
-                    id="contact-name"
                     type="text"
+                    id="name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-                    placeholder="Your name"
+                    className="block w-full rounded-2xl border-0 bg-slate-50 dark:bg-[#1a1a1a] py-3.5 pl-11 pr-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-white/5 focus:ring-2 focus:ring-inset focus:ring-cyan-600 dark:focus:ring-cyan-500 sm:text-sm sm:leading-6 transition-all placeholder:text-slate-400"
+                    placeholder="Your Name"
                   />
                 </div>
-
-                <div>
-                  <label
-                    htmlFor="contact-email"
-                    className="mb-2 block text-sm font-medium text-slate-700"
-                  >
-                    Email
-                  </label>
+                <div className="relative">
+                  <label htmlFor="email" className="sr-only">Email</label>
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <HiOutlineEnvelope className="h-5 w-5 text-slate-400" />
+                  </div>
                   <input
-                    id="contact-email"
                     type="email"
+                    id="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-                    placeholder="you@example.com"
+                    className="block w-full rounded-2xl border-0 bg-slate-50 dark:bg-[#1a1a1a] py-3.5 pl-11 pr-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-white/5 focus:ring-2 focus:ring-inset focus:ring-cyan-600 dark:focus:ring-cyan-500 sm:text-sm sm:leading-6 transition-all placeholder:text-slate-400"
+                    placeholder="Your Email"
                   />
                 </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="contact-subject"
-                  className="mb-2 block text-sm font-medium text-slate-700"
-                >
-                  Subject
-                </label>
+              <div className="relative">
+                <label htmlFor="subject" className="sr-only">Subject</label>
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                  <HiOutlineTag className="h-5 w-5 text-slate-400" />
+                </div>
                 <select
-                  id="contact-subject"
+                  id="subject"
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+                  className="block w-full rounded-2xl border-0 bg-slate-50 dark:bg-[#1a1a1a] py-3.5 pl-11 pr-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-white/5 focus:ring-2 focus:ring-inset focus:ring-cyan-600 dark:focus:ring-cyan-500 sm:text-sm sm:leading-6 transition-all appearance-none"
                 >
-                  <option value="" disabled>
-                    Select a subject
-                  </option>
+                  <option value="" disabled>Select Inquiry Type</option>
                   {SUBJECT_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
+                    <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
               </div>
 
-              <div>
-                <label
-                  htmlFor="contact-message"
-                  className="mb-2 block text-sm font-medium text-slate-700"
-                >
-                  Message
-                </label>
+              <div className="relative">
+                <label htmlFor="message" className="sr-only">Message</label>
+                <div className="pointer-events-none absolute top-4 left-0 flex items-start pl-4">
+                  <HiOutlineChatBubbleBottomCenterText className="h-5 w-5 text-slate-400" />
+                </div>
                 <textarea
-                  id="contact-message"
-                  rows={6}
+                  id="message"
+                  rows={5}
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 shadow-sm outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-                  placeholder="Tell us about your project or business needs"
+                  className="block w-full rounded-2xl border-0 bg-slate-50 dark:bg-[#1a1a1a] py-3.5 pl-11 pr-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-white/5 focus:ring-2 focus:ring-inset focus:ring-cyan-600 dark:focus:ring-cyan-500 sm:text-sm sm:leading-6 transition-all placeholder:text-slate-400 resize-none"
+                  placeholder="How can we help you?"
                 />
               </div>
 
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center justify-center rounded-full bg-slate-950 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition duration-300 hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl disabled:opacity-70"
+                  className="w-full sm:w-auto flex items-center justify-center rounded-2xl bg-cyan-600 dark:bg-cyan-500 px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-cyan-600/30 hover:bg-cyan-500 dark:hover:bg-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
                 >
-                  {submitting ? 'Sending...' : 'Submit Message'}
+                  {submitting ? 'Sending Request...' : 'Send Message'}
                 </button>
               </div>
 
-              {success ? (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                  {success}
-                </div>
-              ) : null}
+              {success && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 p-4 border border-emerald-200 dark:border-emerald-500/20">
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-400">{success}</p>
+                </motion.div>
+              )}
 
-              {error ? (
-                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {error}
-                </div>
-              ) : null}
+              {error && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl bg-rose-50 dark:bg-rose-500/10 p-4 border border-rose-200 dark:border-rose-500/20">
+                  <p className="text-sm font-medium text-rose-800 dark:text-rose-400">{error}</p>
+                </motion.div>
+              )}
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -207,3 +251,4 @@ function ContactSection() {
 }
 
 export default ContactSection
+

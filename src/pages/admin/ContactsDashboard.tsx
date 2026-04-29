@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
-import { removeToken } from '../../auth/token'
+import Card from '../../components/admin/Card'
+import Button from '../../components/admin/Button'
+import Input from '../../components/admin/Input'
 import type { Contact } from '../../types/contact'
 
 type ApiResponse = {
@@ -17,20 +18,15 @@ type SingleResponse = {
 }
 
 export default function ContactsDashboard() {
-  const navigate = useNavigate()
-
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Detail / reply state
   const [selected, setSelected] = useState<Contact | null>(null)
   const [replyText, setReplyText] = useState('')
   const [replying, setReplying] = useState(false)
   const [replySuccess, setReplySuccess] = useState<string | null>(null)
   const [replyError, setReplyError] = useState<string | null>(null)
-
-  const [loggingOut, setLoggingOut] = useState(false)
 
   // ── Fetch contacts ──────────────────────────────
   const fetchContacts = async () => {
@@ -95,20 +91,6 @@ export default function ContactsDashboard() {
     }
   }
 
-  // ── Logout ──────────────────────────────────────
-  const logout = async () => {
-    try {
-      setLoggingOut(true)
-      await api.post('/admin/logout')
-    } catch {
-      // ignore
-    } finally {
-      removeToken()
-      setLoggingOut(false)
-      navigate('/admin/login', { replace: true })
-    }
-  }
-
   // ── Format date ─────────────────────────────────
   const formatDate = (iso: string) => {
     const d = new Date(iso)
@@ -122,133 +104,116 @@ export default function ContactsDashboard() {
   }
 
   return (
-    <div className="min-h-[70vh] bg-slate-50 py-16">
-      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">
-              Admin Dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-              Contact Messages
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              View and reply to messages from the contact form.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => navigate('/admin/services')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Services</button>
-            <button type="button" onClick={() => navigate('/admin/products')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Products</button>
-            <button type="button" onClick={() => navigate('/admin/testimonials')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Testimonials</button>
-            <button type="button" onClick={() => navigate('/admin/partners')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Partners</button>
-            <button type="button" onClick={() => void logout()} disabled={loggingOut} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">
-              {loggingOut ? 'Signing out...' : 'Sign out'}
-            </button>
-          </div>
-        </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+          Contact Messages
+        </h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          View and reply to messages from the contact form.
+        </p>
+      </div>
 
         {/* Error */}
         {error ? (
-          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
             {error}
           </p>
         ) : null}
 
         {/* Content */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
           {/* Message list */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">
+          <Card className="p-0 overflow-hidden h-[70vh] flex flex-col">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Messages{' '}
-                <span className="text-sm font-normal text-slate-400">
+                <span className="text-sm font-normal text-slate-500">
                   ({contacts.length})
                 </span>
               </h2>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => void fetchContacts()}
-                className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+                className="px-3 py-1.5 text-xs"
               >
                 Refresh
-              </button>
+              </Button>
             </div>
 
-            {loading ? (
-              <p className="py-8 text-center text-sm text-slate-500">
-                Loading messages...
-              </p>
-            ) : contacts.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center text-sm text-slate-500">
-                No messages yet.
-              </p>
-            ) : (
-              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-                {contacts.map((contact) => (
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {loading ? (
+                <p className="py-8 text-center text-sm text-slate-500">
+                  Loading messages...
+                </p>
+              ) : contacts.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-8 text-center text-slate-500 mt-4 mx-2">
+                  No messages yet.
+                </p>
+              ) : (
+                contacts.map((contact) => (
                   <button
                     key={contact.id}
                     type="button"
                     onClick={() => openMessage(contact)}
-                    className={`w-full rounded-2xl border p-4 text-left transition ${
+                    className={`w-full rounded-xl border p-4 text-left transition ${
                       selected?.id === contact.id
-                        ? 'border-cyan-300 bg-cyan-50'
-                        : 'border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-cyan-50/50'
+                        ? 'border-cyan-300 dark:border-cyan-700 bg-cyan-50 dark:bg-cyan-900/20'
+                        : 'border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 hover:border-cyan-200 dark:hover:border-cyan-800 hover:bg-cyan-50/50 dark:hover:bg-cyan-900/10'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-slate-900 truncate">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                         {contact.name}
                       </p>
                       {contact.is_replied ? (
-                        <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                        <span className="shrink-0 rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                           Replied
                         </span>
                       ) : (
-                        <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                        <span className="shrink-0 rounded-full bg-amber-100 dark:bg-amber-900/30 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
                           Pending
                         </span>
                       )}
                     </div>
-                    <p className="mt-1 text-xs text-slate-500 truncate">
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">
                       {contact.subject}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                       {formatDate(contact.created_at)}
                     </p>
                   </button>
-                ))}
-              </div>
-            )}
-          </div>
+                ))
+              )}
+            </div>
+          </Card>
 
           {/* Message detail + reply */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <Card className="p-6 h-[70vh] overflow-y-auto">
             {selected ? (
               <div className="space-y-6">
                 {/* Header */}
-                <div>
+                <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
                   <div className="flex items-start justify-between gap-4">
-                    <h2 className="text-xl font-semibold text-slate-900">
+                    <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                       {selected.subject}
                     </h2>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       onClick={() => setSelected(null)}
-                      className="shrink-0 text-sm text-slate-400 hover:text-slate-700"
                     >
                       ✕ Close
-                    </button>
+                    </Button>
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                     From:{' '}
-                    <span className="font-medium text-slate-900">
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {selected.name}
                     </span>{' '}
                     &lt;{selected.email}&gt;
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-400 mt-1">
                     {formatDate(selected.created_at)}
                   </p>
                 </div>
@@ -258,7 +223,7 @@ export default function ContactsDashboard() {
                   <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
                     Message
                   </p>
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-7 text-slate-700 whitespace-pre-wrap">
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#151515] px-5 py-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
                     {selected.message}
                   </div>
                 </div>
@@ -266,64 +231,64 @@ export default function ContactsDashboard() {
                 {/* Existing reply */}
                 {selected.reply ? (
                   <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-600">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-500">
                       Your Reply
                     </p>
-                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm leading-7 text-emerald-800 whitespace-pre-wrap">
+                    <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 px-5 py-4 text-sm leading-relaxed text-emerald-800 dark:text-emerald-200 whitespace-pre-wrap">
                       {selected.reply}
                     </div>
                   </div>
                 ) : null}
 
                 {/* Reply form */}
-                <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
                     {selected.is_replied ? 'Update Reply' : 'Write Reply'}
                   </p>
-                  <textarea
-                    rows={5}
+                  
+                  <Input
+                    multiline
+                    rows={6}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your reply here..."
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
                   />
 
                   {replySuccess ? (
-                    <p className="mt-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    <p className="mt-3 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
                       {replySuccess}
                     </p>
                   ) : null}
 
                   {replyError ? (
-                    <p className="mt-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <p className="mt-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
                       {replyError}
                     </p>
                   ) : null}
 
-                  <button
-                    type="button"
-                    onClick={() => void handleReply()}
-                    disabled={replying || !replyText.trim()}
-                    className="mt-3 rounded-2xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
-                  >
-                    {replying
-                      ? 'Sending...'
-                      : selected.is_replied
-                        ? 'Update & Resend Email'
-                        : 'Send Reply & Email'}
-                  </button>
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      onClick={() => void handleReply()}
+                      disabled={replying || !replyText.trim()}
+                    >
+                      {replying
+                        ? 'Sending...'
+                        : selected.is_replied
+                          ? 'Update & Resend Email'
+                          : 'Send Reply & Email'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="flex h-full min-h-[300px] items-center justify-center">
+              <div className="flex h-full items-center justify-center">
                 <p className="text-sm text-slate-400">
                   Select a message to view details and reply.
                 </p>
               </div>
             )}
-          </div>
+          </Card>
         </div>
-      </div>
     </div>
   )
 }

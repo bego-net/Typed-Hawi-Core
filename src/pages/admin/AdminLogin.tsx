@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
 import { setToken } from '../../auth/token'
+import Button from '../../components/admin/Button'
+import Input from '../../components/admin/Input'
 
 // Response type — matches the backend AdminAuthController response
 type LoginResponse = {
@@ -86,70 +88,55 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-[70vh] bg-slate-50 py-16">
-      <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-700">
-          Admin
-        </p>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#050505] p-4">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] p-8 shadow-sm">
+        <div className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-500">
+            Hawi Admin
+          </p>
+          <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
+            Sign in
+          </h1>
+        </div>
 
-        <h1 className="mt-2 text-3xl font-bold text-slate-950">
-          Sign in
-        </h1>
+        <form onSubmit={onSubmit} className="mt-8 space-y-5">
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-4">
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
 
-          {/* EMAIL */}
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              title="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-rose-500 focus:ring-4 focus:ring-rose-100"
-              autoComplete="email"
-              required
-            />
-          </div>
-
-          {/* PASSWORD */}
-          <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              title="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-rose-500 focus:ring-4 focus:ring-rose-100"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-
-          {/* ERROR */}
           {error && (
-            <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
               {error}
             </p>
           )}
 
-          {/* BUTTON */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
-          >
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </button>
-
+          <div className="pt-2">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full justify-center"
+            >
+              {submitting ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

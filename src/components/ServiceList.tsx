@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import api from '../api/axios'
 import { isAdminLoggedIn } from '../auth/token'
 import ServiceForm from './ServiceForm'
+import Card from './admin/Card'
+import Button from './admin/Button'
 import type { Service } from '../types/service'
 
 type ServiceResponse = Service[] | { data: Service[] }
@@ -72,9 +74,9 @@ function ServiceList() {
 
   if (loading) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-600 shadow-sm">
+      <Card className="p-6 text-slate-600 dark:text-slate-400">
         Loading services...
-      </div>
+      </Card>
     )
   }
 
@@ -89,90 +91,83 @@ function ServiceList() {
       ) : null}
 
       {error ? (
-        <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       ) : null}
 
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">
-              Service List
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-              Available Services
-            </h2>
-          </div>
-
-          <button
-            type="button"
+      <Card className="p-6">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            Available Services <span className="text-sm font-normal text-slate-500">({services.length})</span>
+          </h2>
+          <Button
+            variant="ghost"
             onClick={() => {
               setSelectedService(null)
               void fetchServices()
             }}
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
           >
             Refresh
-          </button>
+          </Button>
         </div>
 
         {services.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-slate-500">
+          <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-12 text-center text-slate-500">
             No services available at the moment.
-          </p>
+          </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {services.map((service) => (
               <article
                 key={service.id}
-                className="rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-cyan-200 hover:shadow-md"
+                className="group relative flex flex-col rounded-xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 p-5 transition-all hover:shadow-md hover:border-cyan-200 dark:hover:border-cyan-900"
               >
                 <div className="mb-4 flex items-start justify-between gap-4">
                   {isImageIcon(service.icon) ? (
                     <img
                       src={service.icon ?? ''}
                       alt={service.title}
-                      className="h-14 w-14 rounded-2xl border border-slate-200 bg-white object-cover"
+                      className="h-14 w-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-cover"
                     />
                   ) : (
-                    <div className="inline-flex min-h-14 min-w-14 items-center justify-center rounded-2xl border border-cyan-200 bg-cyan-50 px-4 text-sm font-semibold text-cyan-700">
+                    <div className="inline-flex min-h-14 min-w-14 items-center justify-center rounded-xl border border-cyan-200 dark:border-cyan-900/50 bg-cyan-50 dark:bg-cyan-900/20 px-4 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
                       {service.icon ?? ''}
                     </div>
                   )}
 
                   {canEdit ? (
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
+                    <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                      <Button
+                        variant="outline"
                         onClick={() => handleEdit(service)}
-                        className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
+                        className="px-3 py-1.5 text-xs"
                       >
                         Edit
-                      </button>
-                      <button
-                        type="button"
+                      </Button>
+                      <Button
+                        variant="danger"
                         onClick={() => void handleDelete(service.id)}
                         disabled={deletingId === service.id}
-                        className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="px-3 py-1.5 text-xs"
                       >
-                        {deletingId === service.id ? 'Deleting...' : 'Delete'}
-                      </button>
+                        {deletingId === service.id ? '...' : 'Delete'}
+                      </Button>
                     </div>
                   ) : null}
                 </div>
 
-                <h3 className="text-xl font-semibold text-slate-900">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                   {service.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400 line-clamp-3">
                   {service.description}
                 </p>
               </article>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </section>
   )
 }

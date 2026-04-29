@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, type ChangeEvent, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
-import { removeToken } from '../../auth/token'
+import Card from '../../components/admin/Card'
+import Button from '../../components/admin/Button'
+import Input from '../../components/admin/Input'
 import type { Testimonial } from '../../services/api'
 
 export default function TestimonialsDashboard() {
-  const navigate = useNavigate()
-
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +20,6 @@ export default function TestimonialsDashboard() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
-  const [loggingOut, setLoggingOut] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -122,157 +120,149 @@ export default function TestimonialsDashboard() {
     }
   }
 
-  // ── Logout ─────────────────────────────────────
-  const logout = async () => {
-    try {
-      setLoggingOut(true)
-      await api.post('/admin/logout')
-    } catch {
-      // ignore
-    } finally {
-      removeToken()
-      setLoggingOut(false)
-      navigate('/admin/login', { replace: true })
-    }
-  }
-
   return (
-    <div className="min-h-[70vh] bg-slate-50 py-16">
-      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">
-              Admin Dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-              Manage Testimonials
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Add, edit, and remove client testimonials with person photos.
-            </p>
-          </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+          Manage Testimonials
+        </h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          Add, edit, and remove client testimonials with person photos.
+        </p>
+      </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => navigate('/admin/services')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Services</button>
-            <button type="button" onClick={() => navigate('/admin/products')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Products</button>
-            <button type="button" onClick={() => navigate('/admin/partners')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Partners</button>
-            <button type="button" onClick={() => navigate('/admin/contacts')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Contacts</button>
-            <button type="button" onClick={() => void logout()} disabled={loggingOut} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">
-              {loggingOut ? 'Signing out...' : 'Sign out'}
-            </button>
-          </div>
+      {/* ── Form ─────────────────────────────── */}
+      <Card className="p-6">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            {selected ? 'Edit Testimonial' : 'Add New Testimonial'}
+          </h2>
+          {selected && (
+            <Button variant="outline" onClick={clearForm}>
+              Cancel
+            </Button>
+          )}
         </div>
 
-        {/* ── Form ─────────────────────────────── */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Testimonial Form</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-                {selected ? 'Edit Testimonial' : 'Add New Testimonial'}
-              </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-1">
+              <Input
+                label="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Person's full name"
+                required
+              />
             </div>
-            {selected && (
-              <button type="button" onClick={clearForm} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900">
-                Cancel
-              </button>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="testimonial-name" className="mb-2 block text-sm font-medium text-slate-700">Name</label>
-                <input id="testimonial-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Person's full name" className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100" required />
-              </div>
-              <div>
-                <label htmlFor="testimonial-role" className="mb-2 block text-sm font-medium text-slate-700">Role / Position</label>
-                <input id="testimonial-role" type="text" value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g. CEO, Marketing Director" className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100" required />
-              </div>
+            <div className="sm:col-span-1">
+              <Input
+                label="Role / Position"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                placeholder="e.g. CEO, Marketing Director"
+                required
+              />
             </div>
 
-            <div>
-              <label htmlFor="testimonial-message" className="mb-2 block text-sm font-medium text-slate-700">Message / Quote</label>
-              <textarea id="testimonial-message" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What did this client say?" rows={4} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100" required />
+            <div className="sm:col-span-2">
+              <Input
+                label="Message / Quote"
+                multiline
+                rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="What did this client say?"
+                required
+              />
             </div>
 
-            <div>
-              <label htmlFor="testimonial-image" className="mb-2 block text-sm font-medium text-slate-700">
+            <div className="sm:col-span-2">
+              <label htmlFor="testimonial-image" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Person Photo {!selected && <span className="text-red-500">*</span>}
               </label>
-              <input ref={fileInputRef} id="testimonial-image" type="file" accept="image/jpeg,image/png,image/jpg" onChange={handleImageChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-cyan-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cyan-700 hover:file:bg-cyan-100" required={!selected} />
+              <input
+                ref={fileInputRef}
+                id="testimonial-image"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleImageChange}
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#151515] px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-50 dark:file:bg-cyan-900/30 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cyan-700 dark:file:text-cyan-400 hover:file:bg-cyan-100 dark:hover:file:bg-cyan-900/50"
+                required={!selected}
+              />
               {imagePreview && (
                 <div className="mt-3">
-                  <img src={imagePreview} alt="Preview" className="h-20 w-20 rounded-full border border-slate-200 object-cover shadow-sm" />
+                  <img src={imagePreview} alt="Preview" className="h-20 w-20 rounded-full border border-slate-200 dark:border-slate-700 object-cover shadow-sm" />
                 </div>
               )}
             </div>
-
-            {formError && (
-              <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</p>
-            )}
-
-            <button type="submit" disabled={submitting} className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70">
-              {submitting ? 'Saving...' : selected ? 'Update Testimonial' : 'Create Testimonial'}
-            </button>
-          </form>
-        </section>
-
-        {/* ── List ─────────────────────────────── */}
-        {error && (
-          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
-        )}
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Testimonial List</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-                All Testimonials <span className="text-sm font-normal text-slate-400">({testimonials.length})</span>
-              </h2>
-            </div>
-            <button type="button" onClick={() => void fetchTestimonials()} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900">
-              Refresh
-            </button>
           </div>
 
-          {loading ? (
-            <p className="py-8 text-center text-sm text-slate-500">Loading testimonials...</p>
-          ) : testimonials.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-slate-500">No testimonials yet.</p>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {testimonials.map((t) => (
-                <article key={t.id} className="rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-cyan-200 hover:shadow-md">
-                  <div className="mb-4 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      {t.image ? (
-                        <img src={t.image} alt={t.name} className="h-14 w-14 rounded-full border border-slate-200 bg-white object-cover" />
-                      ) : (
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-200 bg-cyan-50 text-lg font-bold text-cyan-700">
-                          {t.name.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900">{t.name}</h3>
-                        <p className="text-sm text-slate-500">{t.role}</p>
+          {formError && (
+            <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">{formError}</p>
+          )}
+
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={submitting}>
+              {submitting ? 'Saving...' : selected ? 'Update Testimonial' : 'Create Testimonial'}
+            </Button>
+          </div>
+        </form>
+      </Card>
+
+      {/* ── List ─────────────────────────────── */}
+      {error && (
+        <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">{error}</p>
+      )}
+
+      <Card className="p-6">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            All Testimonials <span className="text-sm font-normal text-slate-500">({testimonials.length})</span>
+          </h2>
+          <Button variant="ghost" onClick={() => void fetchTestimonials()}>
+            Refresh
+          </Button>
+        </div>
+
+        {loading ? (
+          <p className="py-8 text-center text-sm text-slate-500">Loading testimonials...</p>
+        ) : testimonials.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-12 text-center text-slate-500">
+            No testimonials yet.
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
+            {testimonials.map((t) => (
+              <article key={t.id} className="group relative flex flex-col rounded-xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 p-5 transition-all hover:shadow-md hover:border-cyan-200 dark:hover:border-cyan-900">
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    {t.image ? (
+                      <img src={t.image} alt={t.name} className="h-14 w-14 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-cover" />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-200 dark:border-cyan-900/50 bg-cyan-50 dark:bg-cyan-900/20 text-lg font-bold text-cyan-700 dark:text-cyan-400">
+                        {t.name.charAt(0)}
                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => handleEdit(t)} className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700">Edit</button>
-                      <button type="button" onClick={() => void handleDelete(t.id)} disabled={deletingId === t.id} className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70">
-                        {deletingId === t.id ? 'Deleting...' : 'Delete'}
-                      </button>
+                    )}
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t.name}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t.role}</p>
                     </div>
                   </div>
-                  <p className="text-sm leading-7 text-slate-600 italic">"{t.message}"</p>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
+                  <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <Button variant="outline" onClick={() => handleEdit(t)} className="px-3 py-1.5 text-xs">Edit</Button>
+                    <Button variant="danger" onClick={() => void handleDelete(t.id)} disabled={deletingId === t.id} className="px-3 py-1.5 text-xs">
+                      {deletingId === t.id ? '...' : 'Delete'}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 italic">"{t.message}"</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </Card>
     </div>
   )
 }

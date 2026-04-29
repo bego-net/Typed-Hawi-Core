@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, type ChangeEvent, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
-import { removeToken } from '../../auth/token'
+import Card from '../../components/admin/Card'
+import Button from '../../components/admin/Button'
+import Input from '../../components/admin/Input'
 import type { Partner } from '../../services/api'
 
 export default function PartnersDashboard() {
-  const navigate = useNavigate()
-
   const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +18,6 @@ export default function PartnersDashboard() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
-  const [loggingOut, setLoggingOut] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -114,140 +112,122 @@ export default function PartnersDashboard() {
     }
   }
 
-  // ── Logout ─────────────────────────────────────
-  const logout = async () => {
-    try {
-      setLoggingOut(true)
-      await api.post('/admin/logout')
-    } catch {
-      // ignore
-    } finally {
-      removeToken()
-      setLoggingOut(false)
-      navigate('/admin/login', { replace: true })
-    }
-  }
-
   return (
-    <div className="min-h-[70vh] bg-slate-50 py-16">
-      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">
-              Admin Dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-              Manage Partners
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Add, edit, and remove partner logos displayed on the website.
-            </p>
-          </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+          Manage Partners
+        </h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          Add, edit, and remove partner logos displayed on the website.
+        </p>
+      </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => navigate('/admin/services')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Services</button>
-            <button type="button" onClick={() => navigate('/admin/products')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Products</button>
-            <button type="button" onClick={() => navigate('/admin/testimonials')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Testimonials</button>
-            <button type="button" onClick={() => navigate('/admin/contacts')} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950">Contacts</button>
-            <button type="button" onClick={() => void logout()} disabled={loggingOut} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">
-              {loggingOut ? 'Signing out...' : 'Sign out'}
-            </button>
-          </div>
+      {/* ── Form ─────────────────────────────── */}
+      <Card className="p-6">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            {selected ? 'Edit Partner' : 'Add New Partner'}
+          </h2>
+          {selected && (
+            <Button variant="outline" onClick={clearForm}>
+              Cancel
+            </Button>
+          )}
         </div>
 
-        {/* ── Form ─────────────────────────────── */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Partner Form</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-                {selected ? 'Edit Partner' : 'Add New Partner'}
-              </h2>
-            </div>
-            {selected && (
-              <button type="button" onClick={clearForm} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900">
-                Cancel
-              </button>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="partner-name" className="mb-2 block text-sm font-medium text-slate-700">Company Name</label>
-              <input id="partner-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Partner company name" className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100" required />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Input
+                label="Company Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Partner company name"
+                required
+              />
             </div>
 
-            <div>
-              <label htmlFor="partner-logo" className="mb-2 block text-sm font-medium text-slate-700">
+            <div className="sm:col-span-2">
+              <label htmlFor="partner-logo" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Company Logo {!selected && <span className="text-red-500">*</span>}
               </label>
-              <input ref={fileInputRef} id="partner-logo" type="file" accept="image/jpeg,image/png,image/jpg" onChange={handleLogoChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-cyan-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cyan-700 hover:file:bg-cyan-100" required={!selected} />
+              <input
+                ref={fileInputRef}
+                id="partner-logo"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleLogoChange}
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#151515] px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-50 dark:file:bg-cyan-900/30 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cyan-700 dark:file:text-cyan-400 hover:file:bg-cyan-100 dark:hover:file:bg-cyan-900/50"
+                required={!selected}
+              />
               {logoPreview && (
                 <div className="mt-3">
-                  <img src={logoPreview} alt="Preview" className="h-16 w-auto rounded-xl border border-slate-200 object-contain bg-white p-2 shadow-sm" />
+                  <img src={logoPreview} alt="Preview" className="h-16 w-auto rounded-xl border border-slate-200 dark:border-slate-700 object-contain bg-white dark:bg-[#151515] p-2 shadow-sm" />
                 </div>
               )}
             </div>
-
-            {formError && (
-              <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</p>
-            )}
-
-            <button type="submit" disabled={submitting} className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70">
-              {submitting ? 'Saving...' : selected ? 'Update Partner' : 'Create Partner'}
-            </button>
-          </form>
-        </section>
-
-        {/* ── List ─────────────────────────────── */}
-        {error && (
-          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
-        )}
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Partner List</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-                All Partners <span className="text-sm font-normal text-slate-400">({partners.length})</span>
-              </h2>
-            </div>
-            <button type="button" onClick={() => void fetchPartners()} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900">
-              Refresh
-            </button>
           </div>
 
-          {loading ? (
-            <p className="py-8 text-center text-sm text-slate-500">Loading partners...</p>
-          ) : partners.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-slate-500">No partners yet.</p>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {partners.map((partner) => (
-                <article key={partner.id} className="rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-cyan-200 hover:shadow-md">
-                  <div className="mb-4 flex items-center justify-between gap-4">
-                    {partner.logo ? (
-                      <img src={partner.logo} alt={partner.name} className="h-12 w-auto max-w-[120px] rounded-lg border border-slate-200 bg-white object-contain p-1.5" />
-                    ) : (
-                      <div className="flex h-12 items-center justify-center rounded-lg border border-cyan-200 bg-cyan-50 px-3 text-sm font-semibold text-cyan-700">
-                        LOGO
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => handleEdit(partner)} className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700">Edit</button>
-                      <button type="button" onClick={() => void handleDelete(partner.id)} disabled={deletingId === partner.id} className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70">
-                        {deletingId === partner.id ? 'Deleting...' : 'Delete'}
-                      </button>
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900">{partner.name}</h3>
-                </article>
-              ))}
-            </div>
+          {formError && (
+            <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">{formError}</p>
           )}
-        </section>
-      </div>
+
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={submitting}>
+              {submitting ? 'Saving...' : selected ? 'Update Partner' : 'Create Partner'}
+            </Button>
+          </div>
+        </form>
+      </Card>
+
+      {/* ── List ─────────────────────────────── */}
+      {error && (
+        <p className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-500/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">{error}</p>
+      )}
+
+      <Card className="p-6">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            All Partners <span className="text-sm font-normal text-slate-500">({partners.length})</span>
+          </h2>
+          <Button variant="ghost" onClick={() => void fetchPartners()}>
+            Refresh
+          </Button>
+        </div>
+
+        {loading ? (
+          <p className="py-8 text-center text-sm text-slate-500">Loading partners...</p>
+        ) : partners.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-12 text-center text-slate-500">
+            No partners yet.
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {partners.map((partner) => (
+              <article key={partner.id} className="group relative flex flex-col rounded-xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 p-5 transition-all hover:shadow-md hover:border-cyan-200 dark:hover:border-cyan-900">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  {partner.logo ? (
+                    <img src={partner.logo} alt={partner.name} className="h-12 w-auto max-w-[120px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white object-contain p-1.5" />
+                  ) : (
+                    <div className="flex h-12 items-center justify-center rounded-lg border border-cyan-200 dark:border-cyan-900/50 bg-cyan-50 dark:bg-cyan-900/20 px-3 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
+                      LOGO
+                    </div>
+                  )}
+                  <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <Button variant="outline" onClick={() => handleEdit(partner)} className="px-3 py-1.5 text-xs">Edit</Button>
+                    <Button variant="danger" onClick={() => void handleDelete(partner.id)} disabled={deletingId === partner.id} className="px-3 py-1.5 text-xs">
+                      {deletingId === partner.id ? '...' : 'Delete'}
+                    </Button>
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{partner.name}</h3>
+              </article>
+            ))}
+          </div>
+        )}
+      </Card>
     </div>
   )
 }
