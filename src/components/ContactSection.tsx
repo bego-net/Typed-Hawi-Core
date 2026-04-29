@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import api from '../api/axios'
+import SocialLinks from './SocialLinks'
 
 const SUBJECT_OPTIONS = [
   'General Inquiry',
@@ -83,6 +84,14 @@ function ContactSection() {
               your team needs support. We will turn your ideas into a clear next
               step.
             </p>
+
+            {/* Social media links */}
+            <div className="mt-8">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                Follow us
+              </p>
+              <SocialLinks iconSize={22} />
+            </div>
           </div>
 
           <div className="mx-auto w-full max-w-2xl rounded-[2rem] border border-white/70 bg-white/85 p-6 shadow-xl shadow-sky-200/70 backdrop-blur sm:p-8">
