@@ -107,34 +107,37 @@ function ServiceDetails() {
       </div>
 
       {/* Content Section */}
-      <Section background="light" containerClassName="max-w-4xl">
+      <div className="mx-auto max-w-4xl px-6 py-10">
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {/* Service Image if exists */}
           {service.image_url && (
-            <div className="mb-16 overflow-hidden rounded-3xl shadow-2xl shadow-slate-200 dark:shadow-none">
+            <div className="mb-10 overflow-hidden rounded-3xl shadow-2xl">
               <img src={service.image_url} alt={title} className="w-full object-cover" />
             </div>
           )}
 
-          {/* Full Content with Tailwind Prose */}
-          <div className="prose prose-lg prose-slate max-w-none dark:prose-invert 
-            prose-headings:font-bold prose-headings:tracking-tight 
-            prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
-            prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:leading-relaxed
-            prose-li:text-slate-600 dark:prose-li:text-slate-400
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-3xl"
-          >
-            {full_content ? (
-              <div dangerouslySetInnerHTML={{ __html: full_content }} />
-            ) : (
-              <p className="text-lg">{short_description}</p>
-            )}
+          {/* Full Content Card */}
+          <div className="overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800 sm:p-12">
+            <div className="prose prose-slate max-w-none dark:prose-invert 
+              prose-headings:font-bold prose-headings:tracking-tight 
+              prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+              prose-p:text-lg prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-p:text-slate-400
+              prose-li:text-lg prose-li:text-slate-600 dark:prose-li:text-slate-400
+              prose-strong:text-slate-900 dark:prose-strong:text-white
+              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+              prose-img:rounded-2xl"
+            >
+              {full_content ? (
+                <div dangerouslySetInnerHTML={{ __html: full_content }} />
+              ) : (
+                <p className="text-lg">{short_description}</p>
+              )}
+            </div>
           </div>
 
           {/* Bottom Actions */}
@@ -153,7 +156,7 @@ function ServiceDetails() {
             </Link>
           </div>
         </motion.div>
-      </Section>
+      </div>
     </div>
   )
 }
