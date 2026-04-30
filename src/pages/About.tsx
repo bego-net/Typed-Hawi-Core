@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  HiOutlineLightBulb, HiOutlineEye, HiOutlineUserGroup, 
-  HiOutlineRocketLaunch, HiOutlineShieldCheck, HiOutlineGlobeAlt,
+  HiOutlineLightBulb, HiOutlineEye,
   HiOutlineCodeBracket, HiOutlineDevicePhoneMobile, HiOutlineCpuChip 
 } from 'react-icons/hi2'
 

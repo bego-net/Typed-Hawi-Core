@@ -242,11 +242,8 @@ export default function ContactsDashboard() {
 
                 {/* Reply form */}
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {selected.is_replied ? 'Update Reply' : 'Write Reply'}
-                  </p>
-                  
                   <Input
+                    label={selected.is_replied ? 'Update Reply' : 'Write Reply'}
                     multiline
                     rows={6}
                     value={replyText}

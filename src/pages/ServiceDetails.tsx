@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { HiOutlineArrowLeft } from 'react-icons/hi'
 import api from '../api/axios'
-import Section from '../components/Section'
+
 import type { Service } from '../types/service'
 
 type ApiResponse = {
