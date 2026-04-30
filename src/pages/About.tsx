@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { 
   HiOutlineLightBulb, HiOutlineEye, HiOutlineUserGroup, 
   HiOutlineRocketLaunch, HiOutlineShieldCheck, HiOutlineGlobeAlt,
-  HiOutlineCode, HiOutlineDevicePhoneMobile, HiOutlineCpuChip 
+  HiOutlineCodeBracket, HiOutlineDevicePhoneMobile, HiOutlineCpuChip 
 } from 'react-icons/hi2'
 
 const fadeIn = {
@@ -130,7 +130,7 @@ function About() {
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
             {[
-              { icon: HiOutlineCode, title: 'Clean Architecture', desc: 'Maintainable, scalable, and robust codebases built for the future.' },
+              { icon: HiOutlineCodeBracket, title: 'Clean Architecture', desc: 'Maintainable, scalable, and robust codebases built for the future.' },
               { icon: HiOutlineDevicePhoneMobile, title: 'Responsive Design', desc: 'Flawless user experiences across all devices and screen sizes.' },
               { icon: HiOutlineCpuChip, title: 'Modern Stack', desc: 'Leveraging the latest technologies for ultimate performance.' }
             ].map((feature, i) => (
