@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { HiOutlineArrowLeft } from 'react-icons/hi'
 import api from '../api/axios'
+import Section from '../components/Section'
 import type { Service } from '../types/service'
 
 type ApiResponse = {
@@ -36,10 +39,10 @@ function ServiceDetails() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-cyan-600" />
-          <p className="text-sm text-slate-500">Loading service…</p>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
+          <p className="text-slate-500 animate-pulse">Loading service details...</p>
         </div>
       </div>
     )
@@ -47,102 +50,110 @@ function ServiceDetails() {
 
   if (error || !service) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 bg-slate-50">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-3xl">
-          😕
-        </div>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 dark:bg-slate-950">
+        <div className="text-6xl">😕</div>
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-slate-900">Service Not Found</h2>
-          <p className="mt-2 text-sm text-slate-500">{error || 'The service you are looking for does not exist.'}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Service Not Found</h2>
+          <p className="mt-2 text-slate-500">{error || 'The service you are looking for does not exist.'}</p>
         </div>
         <Link
           to="/services"
-          className="rounded-2xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
         >
-          ← Back to Services
+          <HiOutlineArrowLeft /> Back to Services
         </Link>
       </div>
     )
   }
 
+  // Map backend fields to the user's requested naming
+  const title = service.title
+  const short_description = service.description
+  const full_content = service.content
+
   return (
-    <div className="min-h-[60vh] bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 sm:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(6,182,212,0.15),transparent_60%)]" />
-        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <nav className="mb-8 flex items-center gap-2 text-sm text-slate-400">
-            <Link to="/" className="transition hover:text-white">Home</Link>
-            <span className="text-slate-600">/</span>
-            <Link to="/services" className="transition hover:text-white">Services</Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-cyan-400">{service.title}</span>
-          </nav>
+      <div className="relative overflow-hidden bg-slate-900 py-16 dark:bg-slate-950 sm:py-24 lg:py-32">
+        {/* Background Patterns */}
+        <div className="absolute inset-0 z-0 opacity-10">
+          <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-primary blur-3xl" />
+          <div className="absolute -right-20 -bottom-20 h-96 w-96 rounded-full bg-accent blur-3xl" />
+        </div>
 
-          <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-            {/* Icon */}
-            {service.icon && (
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 via-rose-500 to-orange-400 text-2xl font-bold text-white shadow-lg shadow-rose-500/30">
-                {service.icon}
-              </div>
-            )}
-
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                {service.title}
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
-                {service.description}
-              </p>
-            </div>
-          </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <nav className="mb-8 flex justify-center items-center gap-2 text-sm text-slate-400">
+              <Link to="/" className="transition hover:text-white">Home</Link>
+              <span>/</span>
+              <Link to="/services" className="transition hover:text-white">Services</Link>
+              <span>/</span>
+              <span className="text-primary-light font-medium">{title}</span>
+            </nav>
+            
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              {title}
+            </h1>
+            <p className="mx-auto mt-6 max-w-3xl text-xl leading-8 text-slate-300">
+              {short_description}
+            </p>
+          </motion.div>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        {/* Service Image */}
-        {service.image_url && (
-          <div className="mb-12 overflow-hidden rounded-3xl border border-slate-200 shadow-lg shadow-slate-200/50">
-            <img
-              src={service.image_url}
-              alt={service.title}
-              className="h-auto w-full object-cover"
-            />
-          </div>
-        )}
+      <Section background="light" containerClassName="max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {/* Service Image if exists */}
+          {service.image_url && (
+            <div className="mb-16 overflow-hidden rounded-3xl shadow-2xl shadow-slate-200 dark:shadow-none">
+              <img src={service.image_url} alt={title} className="w-full object-cover" />
+            </div>
+          )}
 
-        {/* Full Content (HTML) */}
-        {service.content ? (
-          <div
-            className="service-content prose prose-slate max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-2xl prose-h3:text-xl prose-p:leading-8 prose-p:text-slate-700 prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-ul:text-slate-700 prose-ol:text-slate-700 prose-li:leading-8"
-            dangerouslySetInnerHTML={{ __html: service.content }}
-          />
-        ) : (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-base leading-8 text-slate-700 whitespace-pre-wrap">
-              {service.description}
-            </p>
+          {/* Full Content with Tailwind Prose */}
+          <div className="prose prose-lg prose-slate max-w-none dark:prose-invert 
+            prose-headings:font-bold prose-headings:tracking-tight 
+            prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+            prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:leading-relaxed
+            prose-li:text-slate-600 dark:prose-li:text-slate-400
+            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+            prose-img:rounded-3xl"
+          >
+            {full_content ? (
+              <div dangerouslySetInnerHTML={{ __html: full_content }} />
+            ) : (
+              <p className="text-lg">{short_description}</p>
+            )}
           </div>
-        )}
 
-        {/* Back link */}
-        <div className="mt-12 flex gap-4">
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-xl"
-          >
-            ← All Services
-          </Link>
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-2 rounded-2xl border border-cyan-200 bg-cyan-50 px-6 py-3 text-sm font-semibold text-cyan-700 transition hover:-translate-y-0.5 hover:bg-cyan-100 hover:shadow-lg"
-          >
-            Get in Touch →
-          </Link>
-        </div>
-      </div>
+          {/* Bottom Actions */}
+          <div className="mt-20 flex flex-col items-center justify-center border-t border-slate-100 pt-12 dark:border-slate-800 sm:flex-row sm:gap-6">
+            <Link
+              to="/contact"
+              className="w-full rounded-2xl bg-primary px-8 py-4 text-center text-lg font-bold text-white shadow-xl shadow-primary/20 transition hover:-translate-y-1 hover:bg-primary-dark sm:w-auto"
+            >
+              Get Started with {title}
+            </Link>
+            <Link
+              to="/services"
+              className="mt-4 flex items-center gap-2 font-semibold text-slate-600 transition hover:text-primary dark:text-slate-400 sm:mt-0"
+            >
+              <HiOutlineArrowLeft /> View Other Services
+            </Link>
+          </div>
+        </motion.div>
+      </Section>
     </div>
   )
 }
